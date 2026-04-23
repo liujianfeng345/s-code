@@ -1,0 +1,1 @@
+Hello from workspace! This is a sample file.
