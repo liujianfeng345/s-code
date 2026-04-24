@@ -72,3 +72,5 @@ error*.txt
 .langgraph_api
 
 .claude/
+
+db/

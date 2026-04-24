@@ -2,11 +2,15 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.checkpoint.memory import MemorySaver
 from langchain.chat_models import BaseChatModel
+from langgraph.types import Checkpointer
 from .state import AgentState
 from .nodes import call_llm
 from .tools import tools
 
-def build_graph(llm: BaseChatModel):
+def build_graph(llm: BaseChatModel, checkpointer: Checkpointer = None):
+    if checkpointer is None:
+        checkpointer = MemorySaver()
+
     workflow = StateGraph(AgentState)
 
     llm_with_tools = llm.bind_tools(tools)
@@ -20,5 +24,4 @@ def build_graph(llm: BaseChatModel):
     workflow.add_conditional_edges("agent", tools_condition)
     workflow.add_edge("tools", "agent")
 
-    memory = MemorySaver()
-    return workflow.compile(checkpointer=memory)
+    return workflow.compile(checkpointer=checkpointer)
